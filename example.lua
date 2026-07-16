@@ -1,4 +1,4 @@
-local lib = loadstring(game:HttpGet"https://raw.githubusercontent.com/dawid-scripts/UI-Libs/main/Vape.txt")()
+local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelopers/Vape-old-UiLibrary/main/vape-old.lua")()
 
 local win = lib:Window("PREVIEW",Color3.fromRGB(44, 120, 224), Enum.KeyCode.RightControl)
 
