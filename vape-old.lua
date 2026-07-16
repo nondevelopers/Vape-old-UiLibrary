@@ -149,7 +149,7 @@ function lib:Window(text, preset, closebind)
     CloseBtn.Name = "CloseBtn"
     CloseBtn.Parent = Main
     CloseBtn.AnchorPoint = Vector2.new(1, 0)
-    CloseBtn.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+    CloseBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     CloseBtn.BorderSizePixel = 0
     CloseBtn.Position = UDim2.new(1, -12, 0, 9)
     CloseBtn.Size = UDim2.new(0, 23, 0, 23)
@@ -177,7 +177,7 @@ function lib:Window(text, preset, closebind)
     MinimizeBtn.Name = "MinimizeBtn"
     MinimizeBtn.Parent = Main
     MinimizeBtn.AnchorPoint = Vector2.new(1, 0)
-    MinimizeBtn.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+    MinimizeBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
     MinimizeBtn.BorderSizePixel = 0
     MinimizeBtn.Position = UDim2.new(1, -40, 0, 9)
     MinimizeBtn.Size = UDim2.new(0, 23, 0, 23)
@@ -216,7 +216,7 @@ function lib:Window(text, preset, closebind)
             TweenService:Create(
                 CloseBtn,
                 TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(34, 34, 34)}
+                {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}
             ):Play()
         end
     )
@@ -235,7 +235,7 @@ function lib:Window(text, preset, closebind)
             TweenService:Create(
                 MinimizeBtn,
                 TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
-                {BackgroundColor3 = Color3.fromRGB(34, 34, 34)}
+                {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}
             ):Play()
         end
     )
@@ -259,9 +259,9 @@ function lib:Window(text, preset, closebind)
         if uitoggled then
             Main:TweenSize(UDim2.new(0, 0, 0, 0), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
             wait(.5)
-            ui.Enabled = false
+            Main.Visible = false
         else
-            ui.Enabled = true
+            Main.Visible = true
             Main:TweenSize(OpenSize(), Enum.EasingDirection.Out, Enum.EasingStyle.Quart, .6, true)
         end
     end
@@ -271,6 +271,55 @@ function lib:Window(text, preset, closebind)
             if io.KeyCode == CloseBind then
                 SetClosed(not uitoggled)
             end
+        end
+    )
+
+    -- Round mobile toggle button: opens/closes the panel with a tap, since
+    -- touch users have no keybind. Parented to `ui` directly (not Main) so
+    -- it stays visible even while the panel itself is closed.
+    local MobileToggleBtn = Instance.new("TextButton")
+    local MobileToggleBtnCorner = Instance.new("UICorner")
+
+    MobileToggleBtn.Name = "MobileToggleBtn"
+    MobileToggleBtn.Parent = ui
+    MobileToggleBtn.AnchorPoint = Vector2.new(1, 1)
+    MobileToggleBtn.Position = UDim2.new(1, -20, 1, -20)
+    MobileToggleBtn.Size = UDim2.new(0, 50, 0, 50)
+    MobileToggleBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+    MobileToggleBtn.BorderSizePixel = 0
+    MobileToggleBtn.AutoButtonColor = false
+    MobileToggleBtn.Font = Enum.Font.GothamBold
+    MobileToggleBtn.Text = string.upper(string.sub(text, 1, 1))
+    MobileToggleBtn.TextColor3 = Color3.fromRGB(210, 210, 210)
+    MobileToggleBtn.TextSize = 18.000
+    MobileToggleBtn.ZIndex = 10
+
+    MobileToggleBtnCorner.CornerRadius = UDim.new(1, 0)
+    MobileToggleBtnCorner.Name = "MobileToggleBtnCorner"
+    MobileToggleBtnCorner.Parent = MobileToggleBtn
+
+    MobileToggleBtn.MouseEnter:Connect(
+        function()
+            TweenService:Create(
+                MobileToggleBtn,
+                TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(50, 50, 50)}
+            ):Play()
+        end
+    )
+    MobileToggleBtn.MouseLeave:Connect(
+        function()
+            TweenService:Create(
+                MobileToggleBtn,
+                TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                {BackgroundColor3 = Color3.fromRGB(30, 30, 30)}
+            ):Play()
+        end
+    )
+
+    MobileToggleBtn.MouseButton1Click:Connect(
+        function()
+            SetClosed(not uitoggled)
         end
     )
 
@@ -1442,9 +1491,24 @@ function lib:Window(text, preset, closebind)
             Color.BackgroundColor3 = preset
             pcall(callback, BoxColor.BackgroundColor3)
 
+            local function UpdateColorFromPosition(pos)
+                local ColorX =
+                    (math.clamp(pos.X - Color.AbsolutePosition.X, 0, Color.AbsoluteSize.X) /
+                    Color.AbsoluteSize.X)
+                local ColorY =
+                    (math.clamp(pos.Y - Color.AbsolutePosition.Y, 0, Color.AbsoluteSize.Y) /
+                    Color.AbsoluteSize.Y)
+
+                ColorSelection.Position = UDim2.new(ColorX, 0, ColorY, 0)
+                ColorS = ColorX
+                ColorV = 1 - ColorY
+
+                UpdateColorPicker(true)
+            end
+
             Color.InputBegan:Connect(
                 function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         if RainbowColorPicker then
                             return
                         end
@@ -1453,21 +1517,19 @@ function lib:Window(text, preset, closebind)
                             ColorInput:Disconnect()
                         end
 
+                        -- move immediately to the tap/click point, then track drags.
+                        -- input.Position (not the desktop-only Mouse object) works for both mouse and touch.
+                        UpdateColorFromPosition(input.Position)
+
                         ColorInput =
-                            RunService.RenderStepped:Connect(
-                            function()
-                                local ColorX =
-                                    (math.clamp(Mouse.X - Color.AbsolutePosition.X, 0, Color.AbsoluteSize.X) /
-                                    Color.AbsoluteSize.X)
-                                local ColorY =
-                                    (math.clamp(Mouse.Y - Color.AbsolutePosition.Y, 0, Color.AbsoluteSize.Y) /
-                                    Color.AbsoluteSize.Y)
-
-                                ColorSelection.Position = UDim2.new(ColorX, 0, ColorY, 0)
-                                ColorS = ColorX
-                                ColorV = 1 - ColorY
-
-                                UpdateColorPicker(true)
+                            UserInputService.InputChanged:Connect(
+                            function(movedInput)
+                                if
+                                    movedInput.UserInputType == Enum.UserInputType.MouseMovement or
+                                        movedInput.UserInputType == Enum.UserInputType.Touch
+                                 then
+                                    UpdateColorFromPosition(movedInput.Position)
+                                end
                             end
                         )
                     end
@@ -1476,7 +1538,7 @@ function lib:Window(text, preset, closebind)
 
             Color.InputEnded:Connect(
                 function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         if ColorInput then
                             ColorInput:Disconnect()
                         end
@@ -1484,9 +1546,20 @@ function lib:Window(text, preset, closebind)
                 end
             )
 
+            local function UpdateHueFromPosition(pos)
+                local HueY =
+                    (math.clamp(pos.Y - Hue.AbsolutePosition.Y, 0, Hue.AbsoluteSize.Y) /
+                    Hue.AbsoluteSize.Y)
+
+                HueSelection.Position = UDim2.new(0.48, 0, HueY, 0)
+                ColorH = 1 - HueY
+
+                UpdateColorPicker(true)
+            end
+
             Hue.InputBegan:Connect(
                 function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         if RainbowColorPicker then
                             return
                         end
@@ -1495,17 +1568,17 @@ function lib:Window(text, preset, closebind)
                             HueInput:Disconnect()
                         end
 
+                        UpdateHueFromPosition(input.Position)
+
                         HueInput =
-                            RunService.RenderStepped:Connect(
-                            function()
-                                local HueY =
-                                    (math.clamp(Mouse.Y - Hue.AbsolutePosition.Y, 0, Hue.AbsoluteSize.Y) /
-                                    Hue.AbsoluteSize.Y)
-
-                                HueSelection.Position = UDim2.new(0.48, 0, HueY, 0)
-                                ColorH = 1 - HueY
-
-                                UpdateColorPicker(true)
+                            UserInputService.InputChanged:Connect(
+                            function(movedInput)
+                                if
+                                    movedInput.UserInputType == Enum.UserInputType.MouseMovement or
+                                        movedInput.UserInputType == Enum.UserInputType.Touch
+                                 then
+                                    UpdateHueFromPosition(movedInput.Position)
+                                end
                             end
                         )
                     end
@@ -1514,7 +1587,7 @@ function lib:Window(text, preset, closebind)
 
             Hue.InputEnded:Connect(
                 function(input)
-                    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
                         if HueInput then
                             HueInput:Disconnect()
                         end
