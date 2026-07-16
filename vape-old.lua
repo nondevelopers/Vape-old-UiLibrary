@@ -293,6 +293,9 @@ function lib:Window(text, preset, closebind)
     MobileToggleBtn.TextColor3 = Color3.fromRGB(210, 210, 210)
     MobileToggleBtn.TextSize = 18.000
     MobileToggleBtn.ZIndex = 10
+    -- only show this on touch devices; desktop users already have the
+    -- close/minimize buttons and the CloseBind keybind
+    MobileToggleBtn.Visible = UserInputService.TouchEnabled
 
     MobileToggleBtnCorner.CornerRadius = UDim.new(1, 0)
     MobileToggleBtnCorner.Name = "MobileToggleBtnCorner"
