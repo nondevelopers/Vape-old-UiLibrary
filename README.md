@@ -13,6 +13,8 @@ https://github.com/GhostDuckyy/UI-Libraries/tree/main/Vape%20ui%20lib
 loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelopers/Vape-UiLibrary/main/example.lua"))()
 ```
 
+[vapeui](https://github.com/nondevelopers/Vape-UiLibrary/blob/e90c485226313b5f8f8e77673ea85412a94c7473/vapeui.png)
+
 ## updates
 
 > 07/17/2026
