@@ -11,14 +11,14 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelopers/Vape-Ui
 > 07/17/2026  
 [+] added drag to the mobile close/open button.  
 
-07/16/2026  
+> 07/16/2026  
 [+] added setting tab, with change theme, fully close ui.  
 [-] removed change theme tab.  
 [+] added section code.  
 [+] added movement tab.  
 [+] updated the example script.  
 
-07/15/2026  
+> 07/15/2026  
 [+] fixed color picker not working for mobile.  
 [+] fixed slider.  
 [+] added minimize button, close button.  
