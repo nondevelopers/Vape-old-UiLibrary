@@ -2,7 +2,7 @@
 __original github:__  
 https://github.com/GhostDuckyy/UI-Libraries/tree/main/Vape%20ui%20lib  
 
--
+-This script is updated by claude/gemini, none of this is actually deved without ai.
 ```lua
 -- this is the example script, if you wanna check the example source code, just check it out, only did this because i was lazy ngl.
 loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelopers/Vape-UiLibrary/main/example.lua"))()
