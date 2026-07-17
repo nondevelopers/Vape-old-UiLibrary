@@ -1950,6 +1950,93 @@ function lib:Window(text, preset, closebind)
 
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
         end
+        -- tabcontent:Paragraph(title, text, avatar)
+        --   A card with a bold title and a wrapped body of text below it.
+        --   avatar is optional: pass a Roblox userId (number) or username
+        --   (string) and a circular avatar thumbnail is shown on the left.
+        function tabcontent:Paragraph(title, text, avatar)
+            local TextService = game:GetService("TextService")
+
+            local hasAvatar = avatar ~= nil and avatar ~= false
+            local leftInset = hasAvatar and 63 or 13
+            local textWidth = 363 - leftInset - 13
+
+            local titleBounds =
+                TextService:GetTextSize(title, 14, Enum.Font.GothamBold, Vector2.new(textWidth, math.huge))
+            local textBounds = TextService:GetTextSize(text, 13, Enum.Font.Gotham, Vector2.new(textWidth, math.huge))
+
+            local contentHeight = 13 + titleBounds.Y + 4 + textBounds.Y + 13
+            local cardHeight = math.max(contentHeight, hasAvatar and 68 or 0, 42)
+
+            local Paragraph = Instance.new("Frame")
+            local ParagraphCorner = Instance.new("UICorner")
+            local ParagraphTitle = Instance.new("TextLabel")
+            local ParagraphText = Instance.new("TextLabel")
+
+            Paragraph.Name = "Paragraph"
+            Paragraph.Parent = Tab
+            Paragraph.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+            Paragraph.Size = UDim2.new(0, 363, 0, cardHeight)
+
+            ParagraphCorner.CornerRadius = UDim.new(0, 5)
+            ParagraphCorner.Name = "ParagraphCorner"
+            ParagraphCorner.Parent = Paragraph
+
+            if hasAvatar then
+                local userId = avatar
+                if typeof(avatar) == "string" then
+                    local success, id =
+                        pcall(
+                        function()
+                            return game:GetService("Players"):GetUserIdFromNameAsync(avatar)
+                        end
+                    )
+                    userId = success and id or 1
+                end
+
+                local AvatarImage = Instance.new("ImageLabel")
+                local AvatarCorner = Instance.new("UICorner")
+
+                AvatarImage.Name = "AvatarImage"
+                AvatarImage.Parent = Paragraph
+                AvatarImage.BackgroundTransparency = 1.000
+                AvatarImage.Position = UDim2.new(0, 13, 0, 13)
+                AvatarImage.Size = UDim2.new(0, 42, 0, 42)
+                AvatarImage.Image = "rbxthumb://type=AvatarHeadShot&id=" .. tostring(userId) .. "&w=150&h=150"
+
+                AvatarCorner.CornerRadius = UDim.new(1, 0)
+                AvatarCorner.Name = "AvatarCorner"
+                AvatarCorner.Parent = AvatarImage
+            end
+
+            ParagraphTitle.Name = "ParagraphTitle"
+            ParagraphTitle.Parent = Paragraph
+            ParagraphTitle.BackgroundTransparency = 1.000
+            ParagraphTitle.Position = UDim2.new(0, leftInset, 0, 13)
+            ParagraphTitle.Size = UDim2.new(0, textWidth, 0, titleBounds.Y)
+            ParagraphTitle.Font = Enum.Font.GothamBold
+            ParagraphTitle.Text = title
+            ParagraphTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+            ParagraphTitle.TextSize = 14.000
+            ParagraphTitle.TextWrapped = true
+            ParagraphTitle.TextXAlignment = Enum.TextXAlignment.Left
+            ParagraphTitle.TextYAlignment = Enum.TextYAlignment.Top
+
+            ParagraphText.Name = "ParagraphText"
+            ParagraphText.Parent = Paragraph
+            ParagraphText.BackgroundTransparency = 1.000
+            ParagraphText.Position = UDim2.new(0, leftInset, 0, 13 + titleBounds.Y + 4)
+            ParagraphText.Size = UDim2.new(0, textWidth, 0, textBounds.Y)
+            ParagraphText.Font = Enum.Font.Gotham
+            ParagraphText.Text = text
+            ParagraphText.TextColor3 = Color3.fromRGB(200, 200, 200)
+            ParagraphText.TextSize = 13.000
+            ParagraphText.TextWrapped = true
+            ParagraphText.TextXAlignment = Enum.TextXAlignment.Left
+            ParagraphText.TextYAlignment = Enum.TextYAlignment.Top
+
+            Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+        end
         function tabcontent:Textbox(text, disapper, callback)
             local Textbox = Instance.new("Frame")
             local TextboxCorner = Instance.new("UICorner")
