@@ -5,7 +5,7 @@
 __original github:__  
 https://github.com/GhostDuckyy/UI-Libraries/tree/main/Vape%20ui%20lib  
 
-- __This script is updated by claude/gemini, none of this is actually deved without AI. Go check out the original github, where I found the ui.__
+- __This script is updated by claude/gemini, none of this is actually deved without AI. Go check out the original github, for the non-skidded code, also where I found the ui.__
 
 ### example loadstring
 ```lua
