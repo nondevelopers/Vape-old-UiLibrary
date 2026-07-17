@@ -3,8 +3,8 @@
 ## updates
 
 07/16/2026
-[+] added settings to the buttons.
-[+] updated the example script.
+[+] added settings to the buttons.  
+[+] updated the example script.  
 
 07/15/2026  
 [+] fixed color picker not working for mobile.  
