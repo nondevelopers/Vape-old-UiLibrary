@@ -2,7 +2,7 @@
 
 ## updates
 
-07/16/2026
+07/16/2026  
 [+] added settings to the buttons.  
 [+] updated the example script.  
 
