@@ -11,7 +11,6 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelopers/Vape-ol
 [-] removed change theme tab.  
 [+] added section code.  
 [+] added movement tab.  
-[+] added settings to the buttons.  
 [+] updated the example script.  
 
 07/15/2026  
