@@ -10,6 +10,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelopers/Vape-ol
 [+] added setting tab, with change theme, fully close ui.  
 [-] removed change theme tab.  
 [+] added section code.  
+[+] added movement tab.  
 [+] added settings to the buttons.  
 [+] updated the example script.  
 
