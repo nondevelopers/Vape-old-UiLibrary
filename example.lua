@@ -10,6 +10,9 @@ local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelo
 
 local win = lib:Window("Vape Ui Library PREVIEW", Color3.fromRGB(44, 120, 224), Enum.KeyCode.RightControl)
 
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+
 -- win:Tab(title)
 --   Adds a tab to the sidebar. Returns "tab", used to add elements
 --   to that tab. Call win:Tab(...) again for more tabs.
@@ -91,15 +94,32 @@ end)
 --   Plain, non-interactive text - useful for section headers or notes.
 tab:Label("Label")
 
+tab:Section("Paragraphs")
+
+-- tab:Paragraph(title, text)
+--   A card with a bold title and a wrapped body of text below it.
+tab:Paragraph(
+    "About",
+    "This is an example UI built with the Vape UI Library. Every element on this page is just here to show what it looks like and how to call it."
+)
+
+-- tab:Paragraph(title, text, avatar)
+--   Same as above, but avatar (a userId number or a username string)
+--   adds a circular avatar thumbnail on the left. Here we use the
+--   local player's own info to build the body text.
+tab:Paragraph(
+    "Player Info",
+    string.format("display: %s\nuser: %s\nuserid: %s", LocalPlayer.DisplayName, LocalPlayer.Name, LocalPlayer.UserId),
+    LocalPlayer.UserId
+)
+
 -- ============================================================
 -- Movement examples - speed, jump power, infinite jump, noclip,
 -- fly. All client-side Humanoid/character tweaks; nothing here
 -- reads or touches other players.
 -- ============================================================
-local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
-local LocalPlayer = Players.LocalPlayer
 
 local function GetHumanoid()
     local character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
