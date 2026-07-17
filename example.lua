@@ -15,6 +15,14 @@ local win = lib:Window("PREVIEW", Color3.fromRGB(44, 120, 224), Enum.KeyCode.Rig
 --   to that tab. Call win:Tab(...) again for more tabs.
 local tab = win:Tab("Tab 1")
 
+-- tab:Section(text)
+--   A lightweight header used to visually group the elements below
+--   it - no background box, just bold text tinted with the window's
+--   accent color, with a small gap above it (skipped if it's the
+--   first thing in the tab). Returns an object with :Set(newText)
+--   if you want to rename it later.
+tab:Section("Buttons")
+
 -- tab:Button(title, callback, hasSettings)
 --   A simple clickable button; callback runs on click.
 --   hasSettings (optional, true/false) adds a "..." to the button -
@@ -33,13 +41,7 @@ button2:Label("Setting 1")
 button2:Label("Setting 2")
 button2:Label("Setting 3")
 
--- tab:Section(text)
---   A lightweight header used to visually group the elements below
---   it - no background box, just bold text tinted with the window's
---   accent color, with a small gap above it (skipped if it's the
---   first thing in the tab). Returns an object with :Set(newText)
---   if you want to rename it later.
-tab:Section("Basics")
+tab:Section("Controls")
 
 -- tab:Toggle(title, default, callback)
 --   An on/off switch. default is the starting state (true/false).
@@ -68,6 +70,8 @@ end)
 tab:Colorpicker("Colorpicker", Color3.fromRGB(255, 0, 0), function(t)
     print(t)
 end)
+
+tab:Section("Text & Binds")
 
 -- tab:Textbox(title, clearOnFocus, callback)
 --   A single-line text input. clearOnFocus (true/false) wipes the
@@ -103,6 +107,8 @@ local function GetHumanoid()
 end
 
 local movement = win:Tab("Movement")
+
+movement:Section("Speed & Jump")
 
 -- Speed --------------------------------------------------------
 local DEFAULT_WALKSPEED = 16
@@ -170,6 +176,8 @@ local function SetCharacterCollisions(canCollide)
         end
     end
 end
+
+movement:Section("Fly & Noclip")
 
 movement:Toggle("Noclip", false, function(state)
     noclipEnabled = state
@@ -302,6 +310,8 @@ end)
 -- that removes the UI from the game entirely (not just hides it).
 -- ============================================================
 local settings = win:Tab("Settings")
+
+settings:Section("Appearance")
 
 -- tab:Colorpicker(...) + lib:ChangePresetColor(color)
 --   Changes the accent color used by toggles/sliders/tab indicators/
