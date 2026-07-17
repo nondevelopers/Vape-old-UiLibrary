@@ -6,7 +6,7 @@
 --   Creates the window. accentColor tints toggles/sliders/etc.
 --   closeKeybind (optional, defaults to RightControl) hides/shows
 --   the whole UI when pressed. Returns "win", used to make tabs.
-local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelopers/Vape-old-UiLibrary/main/vape-old.lua"))()
+local lib = loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelopers/Vape-UiLibrary/main/source.lua"))()
 
 local win = lib:Window("PREVIEW", Color3.fromRGB(44, 120, 224), Enum.KeyCode.RightControl)
 
