@@ -320,9 +320,67 @@ function lib:Window(text, preset, closebind)
         end
     )
 
-    MobileToggleBtn.MouseButton1Click:Connect(
-        function()
-            SetClosed(not uitoggled)
+    -- Draggable so it doesn't end up parked on top of the jump button.
+    -- We track movement distance so a quick tap still toggles the panel,
+    -- while an actual drag just repositions the button instead.
+    local mobileBtnDragging = false
+    local mobileBtnDragMoved = false
+    local mobileBtnDragStart = nil
+    local mobileBtnStartPos = nil
+    local DRAG_TAP_THRESHOLD = 6
+
+    MobileToggleBtn.InputBegan:Connect(
+        function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                mobileBtnDragging = true
+                mobileBtnDragMoved = false
+                mobileBtnDragStart = Vector2.new(input.Position.X, input.Position.Y)
+                mobileBtnStartPos = MobileToggleBtn.Position
+            end
+        end
+    )
+
+    UserInputService.InputChanged:Connect(
+        function(input)
+            if
+                mobileBtnDragging and
+                    (input.UserInputType == Enum.UserInputType.MouseMovement or
+                        input.UserInputType == Enum.UserInputType.Touch)
+             then
+                local delta = Vector2.new(input.Position.X, input.Position.Y) - mobileBtnDragStart
+
+                if not mobileBtnDragMoved and delta.Magnitude > DRAG_TAP_THRESHOLD then
+                    mobileBtnDragMoved = true
+                end
+
+                if mobileBtnDragMoved then
+                    local screenSize = ui.AbsoluteSize
+                    local btnSize = MobileToggleBtn.AbsoluteSize
+                    local minOffsetX = -(screenSize.X - btnSize.X)
+                    local minOffsetY = -(screenSize.Y - btnSize.Y)
+
+                    local newOffsetX = math.clamp(mobileBtnStartPos.X.Offset + delta.X, minOffsetX, 0)
+                    local newOffsetY = math.clamp(mobileBtnStartPos.Y.Offset + delta.Y, minOffsetY, 0)
+
+                    MobileToggleBtn.Position = UDim2.new(1, newOffsetX, 1, newOffsetY)
+                end
+            end
+        end
+    )
+
+    UserInputService.InputEnded:Connect(
+        function(input)
+            if
+                mobileBtnDragging and
+                    (input.UserInputType == Enum.UserInputType.MouseButton1 or
+                        input.UserInputType == Enum.UserInputType.Touch)
+             then
+                mobileBtnDragging = false
+                if not mobileBtnDragMoved then
+                    -- released without moving past the threshold - treat as a tap
+                    SetClosed(not uitoggled)
+                end
+            end
         end
     )
 
