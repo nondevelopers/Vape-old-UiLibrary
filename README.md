@@ -1,5 +1,5 @@
 # Vape ui library.
-__original script:__  
+__original github:__  
 https://github.com/GhostDuckyy/UI-Libraries/tree/main/Vape%20ui%20lib  
 
 ```lua
