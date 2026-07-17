@@ -623,7 +623,10 @@ function lib:Window(text, preset, closebind)
             end
         )
         local tabcontent = {}
-        function tabcontent:Button(text, callback)
+        function tabcontent:Button(text, callback, hasSettings)
+            hasSettings = hasSettings == true
+            local settingsopen = false
+
             local Button = Instance.new("TextButton")
             local ButtonCorner = Instance.new("UICorner")
             local ButtonTitle = Instance.new("TextLabel")
@@ -631,6 +634,7 @@ function lib:Window(text, preset, closebind)
             Button.Name = "Button"
             Button.Parent = Tab
             Button.BackgroundColor3 = Color3.fromRGB(34, 34, 34)
+            Button.ClipsDescendants = true
             Button.Size = UDim2.new(0, 363, 0, 42)
             Button.AutoButtonColor = false
             Button.Font = Enum.Font.SourceSans
@@ -680,8 +684,148 @@ function lib:Window(text, preset, closebind)
                 end
             )
 
+            -- buttoncontent is returned so a caller can add rows to this button's settings
+            -- panel, e.g. local btn = Tab:Button("Kill Aura", fn, true); btn:Label("Range: 15")
+            local buttoncontent = {}
+            function buttoncontent:Label(labeltext)
+            end
+
+            if hasSettings then
+                local DotsBtn = Instance.new("TextButton")
+                local SettingsHolder = Instance.new("ScrollingFrame")
+                local SettingsLayout = Instance.new("UIListLayout")
+
+                DotsBtn.Name = "DotsBtn"
+                DotsBtn.Parent = Button
+                DotsBtn.AnchorPoint = Vector2.new(1, 0)
+                DotsBtn.BackgroundTransparency = 1.000
+                DotsBtn.Position = UDim2.new(1, -8, 0, 0)
+                DotsBtn.Size = UDim2.new(0, 32, 0, 42)
+                DotsBtn.AutoButtonColor = false
+                DotsBtn.Font = Enum.Font.GothamBold
+                DotsBtn.Text = "..."
+                DotsBtn.TextColor3 = Color3.fromRGB(150, 150, 150)
+                DotsBtn.TextSize = 22.000
+                DotsBtn.ZIndex = 2
+
+                DotsBtn.MouseEnter:Connect(
+                    function()
+                        TweenService:Create(
+                            DotsBtn,
+                            TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {TextColor3 = Color3.fromRGB(255, 255, 255)}
+                        ):Play()
+                    end
+                )
+                DotsBtn.MouseLeave:Connect(
+                    function()
+                        TweenService:Create(
+                            DotsBtn,
+                            TweenInfo.new(.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
+                            {TextColor3 = Color3.fromRGB(150, 150, 150)}
+                        ):Play()
+                    end
+                )
+
+                SettingsHolder.Name = "SettingsHolder"
+                SettingsHolder.Parent = Button
+                SettingsHolder.Active = true
+                SettingsHolder.BackgroundTransparency = 1.000
+                SettingsHolder.BorderSizePixel = 0
+                SettingsHolder.Position = UDim2.new(0, 13, 0, 47)
+                SettingsHolder.Size = UDim2.new(0, 337, 0, 0)
+                SettingsHolder.CanvasSize = UDim2.new(0, 0, 0, 0)
+                SettingsHolder.ScrollBarThickness = 3
+                SettingsHolder.ZIndex = 2
+
+                SettingsLayout.Name = "SettingsLayout"
+                SettingsLayout.Parent = SettingsHolder
+                SettingsLayout.SortOrder = Enum.SortOrder.LayoutOrder
+                SettingsLayout.Padding = UDim.new(0, 4)
+
+                -- Recomputes the panel's own size off its content. Returns the visible
+                -- (capped, scrollable past 3 rows) height so callers can size Button.
+                local function RecalcSettingsHolder()
+                    local fullheight = SettingsLayout.AbsoluteContentSize.Y
+                    local visibleheight = math.min(fullheight, 78)
+                    SettingsHolder.CanvasSize = UDim2.new(0, 0, 0, fullheight)
+                    SettingsHolder.Size = UDim2.new(0, 337, 0, visibleheight)
+                    return visibleheight
+                end
+
+                local function SetSettingsOpen(open)
+                    settingsopen = open
+                    local visibleheight = RecalcSettingsHolder()
+                    if settingsopen then
+                        Button:TweenSize(
+                            UDim2.new(0, 363, 0, 52 + visibleheight),
+                            Enum.EasingDirection.Out,
+                            Enum.EasingStyle.Quart,
+                            .2,
+                            true
+                        )
+                    else
+                        Button:TweenSize(
+                            UDim2.new(0, 363, 0, 42),
+                            Enum.EasingDirection.Out,
+                            Enum.EasingStyle.Quart,
+                            .2,
+                            true
+                        )
+                    end
+                    wait(.2)
+                    Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+                end
+
+                -- MouseButton1Click fires for real mouse clicks and mobile/touch taps alike,
+                -- so this is what lets mobile players open the settings from the dots.
+                DotsBtn.MouseButton1Click:Connect(
+                    function()
+                        SetSettingsOpen(not settingsopen)
+                    end
+                )
+
+                -- Right click anywhere else on the button (desktop only) does the same thing.
+                Button.InputBegan:Connect(
+                    function(input)
+                        if input.UserInputType == Enum.UserInputType.MouseButton2 then
+                            SetSettingsOpen(not settingsopen)
+                        end
+                    end
+                )
+
+                function buttoncontent:Label(labeltext)
+                    local SettingLabel = Instance.new("TextLabel")
+                    SettingLabel.Name = "SettingLabel"
+                    SettingLabel.Parent = SettingsHolder
+                    SettingLabel.BackgroundTransparency = 1.000
+                    SettingLabel.Size = UDim2.new(0, 337, 0, 22)
+                    SettingLabel.Font = Enum.Font.Gotham
+                    SettingLabel.Text = labeltext
+                    SettingLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+                    SettingLabel.TextSize = 13.000
+                    SettingLabel.TextXAlignment = Enum.TextXAlignment.Left
+                    SettingLabel.TextWrapped = true
+
+                    local visibleheight = RecalcSettingsHolder()
+                    if settingsopen then
+                        Button:TweenSize(
+                            UDim2.new(0, 363, 0, 52 + visibleheight),
+                            Enum.EasingDirection.Out,
+                            Enum.EasingStyle.Quart,
+                            .2,
+                            true
+                        )
+                        wait(.2)
+                        Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+                    end
+                end
+            end
+
             Tab.CanvasSize = UDim2.new(0, 0, 0, TabLayout.AbsoluteContentSize.Y)
+            return buttoncontent
         end
+
         function tabcontent:Toggle(text,default, callback)
             local toggled = false
 
