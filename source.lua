@@ -1568,9 +1568,10 @@ function lib:Window(text, preset, closebind)
             end
         )
         local tabcontent = {}
-        function tabcontent:Button(text, callback, hasSettings)
+        function tabcontent:Button(text, callback, hasSettings, icon)
             hasSettings = hasSettings == true
             local settingsopen = false
+            local iconAsset = GetIconAsset(icon)
 
             local Button = Instance.new("TextButton")
             local ButtonCorner = Instance.new("UICorner")
@@ -1595,13 +1596,28 @@ function lib:Window(text, preset, closebind)
             ButtonTitle.Parent = Button
             ButtonTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             ButtonTitle.BackgroundTransparency = 1.000
-            ButtonTitle.Position = UDim2.new(0.0358126722, 0, 0, 0)
-            ButtonTitle.Size = UDim2.new(0, 187, 0, 42)
             ButtonTitle.Font = Enum.Font.Gotham
             ButtonTitle.Text = text
             ButtonTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
             ButtonTitle.TextSize = 14.000
             ButtonTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+            if iconAsset then
+                ButtonTitle.Position = UDim2.new(0, 39, 0, 0)
+                ButtonTitle.Size = UDim2.new(0, 161, 0, 42)
+
+                local ButtonIcon = Instance.new("ImageLabel")
+                ButtonIcon.Name = "ButtonIcon"
+                ButtonIcon.Parent = Button
+                ButtonIcon.BackgroundTransparency = 1.000
+                ButtonIcon.Position = UDim2.new(0, 13, 0, 12)
+                ButtonIcon.Size = UDim2.new(0, 18, 0, 18)
+                ButtonIcon.Image = iconAsset
+                ButtonIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+            else
+                ButtonTitle.Position = UDim2.new(0.0358126722, 0, 0, 0)
+                ButtonTitle.Size = UDim2.new(0, 187, 0, 42)
+            end
 
             Button.MouseEnter:Connect(
                 function()
@@ -1771,8 +1787,9 @@ function lib:Window(text, preset, closebind)
             return buttoncontent
         end
 
-        function tabcontent:Toggle(text,default, callback)
+        function tabcontent:Toggle(text,default, callback, icon)
             local toggled = false
+            local iconAsset = GetIconAsset(icon)
 
             local Toggle = Instance.new("TextButton")
             local ToggleCorner = Instance.new("UICorner")
@@ -1805,13 +1822,28 @@ function lib:Window(text, preset, closebind)
             ToggleTitle.Parent = Toggle
             ToggleTitle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
             ToggleTitle.BackgroundTransparency = 1.000
-            ToggleTitle.Position = UDim2.new(0.0358126722, 0, 0, 0)
-            ToggleTitle.Size = UDim2.new(0, 187, 0, 42)
             ToggleTitle.Font = Enum.Font.Gotham
             ToggleTitle.Text = text
             ToggleTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
             ToggleTitle.TextSize = 14.000
             ToggleTitle.TextXAlignment = Enum.TextXAlignment.Left
+
+            if iconAsset then
+                ToggleTitle.Position = UDim2.new(0, 39, 0, 0)
+                ToggleTitle.Size = UDim2.new(0, 161, 0, 42)
+
+                local ToggleIcon = Instance.new("ImageLabel")
+                ToggleIcon.Name = "ToggleIcon"
+                ToggleIcon.Parent = Toggle
+                ToggleIcon.BackgroundTransparency = 1.000
+                ToggleIcon.Position = UDim2.new(0, 13, 0, 12)
+                ToggleIcon.Size = UDim2.new(0, 18, 0, 18)
+                ToggleIcon.Image = iconAsset
+                ToggleIcon.ImageColor3 = Color3.fromRGB(255, 255, 255)
+            else
+                ToggleTitle.Position = UDim2.new(0.0358126722, 0, 0, 0)
+                ToggleTitle.Size = UDim2.new(0, 187, 0, 42)
+            end
 
             FrameToggle1.Name = "FrameToggle1"
             FrameToggle1.Parent = Toggle
@@ -3117,6 +3149,21 @@ function lib:Window(text, preset, closebind)
         end
         return tabcontent
     end
+
+    -- Welcome notification, fired once when the window is created. Runs in
+    -- its own coroutine since lib:Notification yields (it waits out its own
+    -- tween-in), so it doesn't hold up the rest of window/tab setup below
+    -- this call in the developer's script.
+    coroutine.wrap(
+        function()
+            lib:Notification(
+                "Welcome",
+                string.format("Logged in as %s (@%s)", LocalPlayer.DisplayName, LocalPlayer.Name),
+                "Okay"
+            )
+        end
+    )()
+
     return tabhold
 end
 return lib
