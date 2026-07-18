@@ -17,7 +17,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelopers/Vape-Ui
 ## updates
 
 > 07/17/2026
-[+] added lucide icons.  
+[+] added lucide icons.   
 [-] removed Movement tab.  
 [+] added paragraphs, with avatar.  
 [+] added drag to the mobile close/open button.  
