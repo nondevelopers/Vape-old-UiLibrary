@@ -16,6 +16,9 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/nondevelopers/Vape-Ui
 
 ## updates
 
+> 07/18/2026
+[+] added support lucide icons for button, toggle.
+
 > 07/17/2026  
 [+] added lucide icons.   
 [-] removed Movement tab.  
